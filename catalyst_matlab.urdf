@@ -1,0 +1,125 @@
+<robot name = "linkage">
+	<!-- links section -->>
+	<link name = "link 0">
+		<visual>
+			<origin xyz = "0 0 0" />
+			<geometry>
+				<box size = "10 10 0.5"  />
+			</geometry>
+			<material name = "gray A">
+				<color rgba = "0.4 0.4 0.4 0.2" />
+			</material>
+		</visual>
+	</link>
+	<link name = "link 1">
+		<visual>
+			<origin xyz = "0 0 4" rpy = "0 0 0"/>
+			<geometry>
+				<cylinder radius = "4.0" length = "8"  />
+			</geometry>
+			<material name = "orange">
+				<color rgba = "0.93 0.64 0.18 1" />
+			</material>
+		</visual>
+		<visual>
+			<origin xyz = "0 0 8" rpy = "0 0 0"/>
+			<geometry>
+				<sphere radius = "4" />
+			</geometry>
+			<material name = "orange">
+				<color rgba = "0.93 0.64 0.18 1" />
+			</material>
+		</visual>
+	</link>
+	<link name = "link 2">
+		<visual>
+			<origin xyz = "0 -5 0" rpy = "1.5708 0 0"/>
+			<geometry>
+				<cylinder radius = "2.171" length = "10"  />
+			</geometry>
+			<material name = "orange">
+				<color rgba = "0.93 0.64 0.18 1" />
+			</material>
+		</visual>
+		<visual>
+			<origin xyz = "0 -10 0" rpy = "0 0 0"/>
+			<geometry>
+				<sphere radius = "2.171" />
+			</geometry>
+			<material name = "orange">
+				<color rgba = "0.93 0.64 0.18 1" />
+			</material>
+		</visual>
+	</link>
+	<link name = "link 3">
+		<visual>
+			<origin xyz = "0 5 0" rpy = "1.5708 0 0"/>
+			<geometry>
+				<cylinder radius = "2" length = "10"  />
+			</geometry>
+			<material name = "orange">
+				<color rgba = "0.93 0.64 0.18 1" />
+			</material>
+		</visual>
+	</link>
+	<link name = "link 4">
+		<visual>
+			<origin xyz = "0 0 0" rpy = "0 1.5708 0"/>
+			<geometry>
+				<sphere radius = "2" />
+			</geometry>
+			<material name = "orange">
+				<color rgba = "0.93 0.64 0.18 1" />
+			</material>
+		</visual>
+	</link>
+	<link name = "link 5">
+		<visual>
+			<origin xyz = "0 0 -4" rpy = "0 0 0"/>
+			<geometry>
+				<cylinder radius = "0.5" length = "8"  />
+			</geometry>
+			<material name = "gray A">
+				<color rgba = "0.92 0.92 0.92 1" />
+			</material>
+		</visual>
+	</link>
+
+
+	<!-- joints section -->>
+	<joint name = "joint 1" type = "revolute">
+		<parent link = "link 0" />
+		<child link = "link 1" />
+		<origin xyz = "0 0 0" rpy = "0 0 0"/>
+		<axis xyz = "0 0 1" />
+		<limit effort="1000.0" lower="-3.1416" upper="3.1416" velocity="0.5"/>
+	</joint>
+	<joint name = "joint 2" type = "revolute">
+		<parent link = "link 1" />
+		<child link = "link 2" />
+		<origin xyz = "0 0 10" rpy = "-1.5708 0 0"/>
+		<axis xyz = "0 0 1" />
+		<limit effort="1000.0" lower="0" upper="0.7854" velocity="0.5"/>
+	</joint>
+	<joint name = "joint 3" type = "revolute">
+		<parent link = "link 2" />
+		<child link = "link 3" />
+		<origin xyz = "0 -10 0" rpy = "0 0 -1.5708"/>
+		<axis xyz = "0 0 1" />
+		<limit effort="1000.0" lower="-1.5708" upper="0.5236" velocity="0.5"/>
+	</joint>
+	<joint name = "joint 4" type = "revolute">
+		<parent link = "link 3" />
+		<child link = "link 4" />
+		<origin xyz = "0 10 0" rpy = "0 0 1.5708"/>
+		<axis xyz = "0 0 1" />
+		<limit effort="1000.0" lower="-0.7854" upper="0.7854" velocity="0.5"/>
+	</joint>
+	<joint name = "joint 5" type = "revolute">
+		<parent link = "link 4" />
+		<child link = "link 5" />
+		<origin xyz = "8 0 0" rpy = "1.5708 0 1.5708"/>
+		<axis xyz = "0 0 1" />
+		<limit effort="1000.0" lower="-1.3090" upper="1.3090" velocity="0.5"/>
+	</joint>
+</robot>

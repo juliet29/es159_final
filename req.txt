@@ -1,0 +1,2 @@
+numpy==1.18.3
+pybullet==2.7.2
