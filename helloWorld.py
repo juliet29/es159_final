@@ -1,6 +1,7 @@
 ## loads 2 robots and directly controls their position 
 
 # activate virtual environment: source env159/bin/activate 
+
 # docs: https://docs.google.com/document/d/10sXEhzFRSnvFcl3XxNGhnD4N2SedqwdAvK3dsihxVUA/edit#heading=h.la294ocbo43o
 # example: http://alexanderfabisch.github.io/pybullet.html 
 
@@ -17,7 +18,7 @@ p.setAdditionalSearchPath(pybullet_data.getDataPath())
 
 # load a plane from py_bullet data 
 planeId = p.loadURDF("plane.urdf")
-
+hi = p.loadURDF("iiwa7.urdf")
 # set starting locations for the two robots 
 cubeStartPos = [0,0,0]
 cubeStartPos2 = [2,2,0]
