@@ -3,15 +3,9 @@ import time
 import math
 from datetime import datetime
 import pybullet_data
-import cmath
-
-# clid = p.connect(p.SHARED_MEMORY)
-# if (clid < 0):
-#p.connect(p.GUI)
-  #p.connect(p.SHARED_MEMORY_GUI)
 
 # connect 
-#physicsClient =  p.connect(p.DIRECT)
+#physicsClient =  p.connect(p.DIRECT) # debug mode
 physicsClient =  p.connect(p.GUI)
 p.setAdditionalSearchPath(pybullet_data.getDataPath()) 
 planeId = p.loadURDF("plane.urdf") 
@@ -47,34 +41,10 @@ for i in range(numJoints):
 # no gravity simulation for now 
 p.setGravity(0, 0, 0)
 
-# starting time is 0
-t = 0.01
-
-# set up previous positions, and the prior previous position
-prevPose = [0, 0, 0]
-prevPose1 = [0, 0, 0]
-# does not have a prev pose, set this to false
-hasPrevPose = 1
-
-# use the null space 
-useNullSpace = 0
-# orientation points down if 1, not defined if 0
-useOrientation = 1
-
-#If we set useSimulation=0, it sets the arm pose to be the IK result directly without using dynamic control.
-#This can be used to test the IK result accuracy.
-
-# currently we are using dynamic control
-useSimulation = 1 
 # not using th computer's clock, so need to call the stepStimulation() command directly
 useRealTimeSimulation = 0
 p.setRealTimeSimulation(useRealTimeSimulation)
-#trailDuration is duration (in seconds) after debug lines will be removed automatically
-#use 0 for no-removal
-trailDuration = 15
 
-# ikSolver, not sure this will do
-ikSolver = 0
 
 # set orientation of ee to point down
 orn = p.getQuaternionFromEuler([0, -math.pi, 0])
@@ -90,49 +60,35 @@ for pos in poses:
   jointPoses = p.calculateInverseKinematics(kukaId, kukaEndEffectorIndex, pos, orn, ll, ul, jr, rp)
   configs.append(jointPoses)
 
-# run simulation through our configurations 
+# run simulation through all configurations, and then stop 
 iter = 0
-while iter < len(configs): # reset this later 
+while iter < len(configs): 
   for i in range(len(configs)):
     config = configs[i]
     
     iter +=1
     # reset the robot to this configuration 
-    #print(config)
     for n in range(numJoints):
       p.resetJointState(kukaId, n, config[n])
 
-
-    ls = p.getLinkState(kukaId, kukaEndEffectorIndex)
-    # draw line from previous workspace position to current ws position
-    
-    # will want to change to last pos implementation 
+    # show the trajectory the robot is taking
     firstPos = poses[0]
     currPos = poses[i]
-    # nextPos = poses[i + 1]
-    # show the trajectory the robot will take with RGB color 0,0,0.3
     black = [0,0,0]
-    p.addUserDebugLine(firstPos, currPos, black, 1, trailDuration)
-    #p.addUserDebugLine(prevPose1, ls[4], [1, 0, 0], 1, trailDuration)
+    debugDuration = 15
+    p.addUserDebugLine(firstPos, currPos, black, 1, debugDuration)
 
-    # show current pose
+    # show current workspace position 
     currPosStr = str(poses[i])
-    #print(poses[i])
-    print(currPosStr)
-    p.addUserDebugText(currPosStr, [1,1,1], black, lifeTime = 0)
+    pauseTime = 1/5
+    p.addUserDebugText(currPosStr, [1,1,1], black, lifeTime = pauseTime)
 
     # step the simulation 
     p.stepSimulation()
     
-    time.sleep(1/10)
-
-  
-
+    # rest between each step 
+    time.sleep(pauseTime)
 
 
-
-
-
-
-  
+# disconnect  
 p.disconnect()
