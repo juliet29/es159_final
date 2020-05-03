@@ -98,24 +98,35 @@ while iter < len(configs): # reset this later
     
     iter +=1
     # reset the robot to this configuration 
-    print(config)
-    for i in range(numJoints):
-            p.resetJointState(kukaId, i, config[i])
+    #print(config)
+    for n in range(numJoints):
+      p.resetJointState(kukaId, n, config[n])
 
 
     ls = p.getLinkState(kukaId, kukaEndEffectorIndex)
     # draw line from previous workspace position to current ws position
     
     # will want to change to last pos implementation 
+    firstPos = poses[0]
     currPos = poses[i]
-    nextPos = poses[i + 1]
-    p.addUserDebugLine(currPos, nextPos, [0, 0, 0.3], 1, trailDuration)
+    # nextPos = poses[i + 1]
+    # show the trajectory the robot will take with RGB color 0,0,0.3
+    black = [0,0,0]
+    p.addUserDebugLine(firstPos, currPos, black, 1, trailDuration)
     #p.addUserDebugLine(prevPose1, ls[4], [1, 0, 0], 1, trailDuration)
+
+    # show current pose
+    currPosStr = str(poses[i])
+    #print(poses[i])
+    print(currPosStr)
+    p.addUserDebugText(currPosStr, [1,1,1], black, lifeTime = 0)
 
     # step the simulation 
     p.stepSimulation()
     
     time.sleep(1/10)
+
+  
 
 
 
