@@ -4,6 +4,7 @@ import math
 from datetime import datetime
 import pybullet_data
 from geoPaths import PATH, path_df
+from scipy.spatial import distance
 
 
 # environment variables 
@@ -48,16 +49,22 @@ for point in range(posPathDF.shape[0]-1):
     nextPoint = tuple(posPathDF.iloc[point + 1])
     p.addUserDebugLine(currPoint, nextPoint, lineColorRGB=[0,1,0], lineWidth=0.9, lifeTime=0)
 
-# find the distance between the robot and the closest point in its hemisphere
+# only want to consider points at z = 0 now
+zeroDF = posPathDF.loc[posPathDF['z'] == 0]
+
+# find the distance between the robot and the furthest point in its hemisphere
+furthestPt = zeroDF.iloc[0]
+for i in range(zeroDF.shape[0]):
+  furthest_dist = distance.euclidean(basePos, furthestPt)
+  if distance.euclidean(basePos, list(zeroDF.iloc[i])) > furthest_dist:
+    furthestPt = zeroDF.iloc[i]
+print(furthestPt)
+p.addUserDebugLine(basePos, furthestPt, lineColorRGB=[0,1,0], lineWidth=0.9, lifeTime=0)
+
 
 
 # show the desired geometry
 print('printing the geom')
-# for point in range(len(path)-1):
-#     currPoint = path[point]
-#     nextPoint = path[point + 1]
-#     p.addUserDebugLine(currPoint, nextPoint, lineColorRGB=debugColor, lineWidth=0.9, lifeTime=0)
- 
 for point in range(path_df.shape[0]-1):
     currPoint = tuple(path_df.iloc[point])
     nextPoint = tuple(path_df.iloc[point + 1])
