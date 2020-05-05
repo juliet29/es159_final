@@ -111,7 +111,6 @@ for lev in range(nice_df.shape[0]):
       nu_dict = {'x': nice_df['x'][lev][element], 'y': nice_df['y'][lev][element], 'z': nice_df['z'][lev]}
       path_rows.append(nu_dict)
 path_df = pd.DataFrame(path_rows)
-# save to a const also
-PATH_DF = path_df
+
 
 
