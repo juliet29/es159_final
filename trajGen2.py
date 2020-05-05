@@ -3,7 +3,7 @@ import time
 import math
 from datetime import datetime
 import pybullet_data
-from path import PATH
+from geoPaths import PATH
 # connect 
 
 #physicsClient =  p.connect(p.DIRECT) # debug mode
@@ -11,11 +11,8 @@ physicsClient =  p.connect(p.GUI)
 p.setAdditionalSearchPath(pybullet_data.getDataPath()) 
 planeId = p.loadURDF("plane.urdf") 
 kukaId = p.loadURDF("kuka_iiwa/model.urdf", [0, 0, 0])
-#kukaId2 = p.loadURDF("kuka_iiwa/model_free_base.urdf", [0, 0, 0]) # also has 7 joints, but there are functions to exert a force on the base 
-#numJoints2 = p.getNumJoints(kukaId2)
 
-
-# rese base position and index to be 0,
+# reset base position and index to be 0,
 p.resetBasePositionAndOrientation(kukaId, [0, 0, 0], [0, 0, 0, 1])
 
 # double check that the the kuka was actually imported 
@@ -44,27 +41,25 @@ jd = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
 for i in range(numJoints):
   p.resetJointState(kukaId, i, rp[i])
 
-# no gravity simulation for now 
-p.setGravity(0, 0, 0)
+# gravity in the simulation 
+p.setGravity(0, 0, -9.8)
 
 # not using th computer's clock, so need to call the stepStimulation() command directly
 useRealTimeSimulation = 0
 p.setRealTimeSimulation(useRealTimeSimulation)
 
-
 # set orientation of ee to point down
 orn = p.getQuaternionFromEuler([0, -math.pi, 0])
 
-# # create a list of not time dependent positions to go through 
-# poses = []
-# for i in range(0,30):
-#   poses.append([0.0, 0.0, 0.0+0.1*i])
-# we will now use the PATH
+
 poses = PATH
 # # notes on range of movement from base position 
 # # x:  [-0.7, 0.5] (forward, backwards) (negative values make robot go forward)!
 # # y: [-0.7, 0.7] (left ,right)
 # # z:  [0, 1] (down, up)
+
+# show the object to print
+
 
 # get the joint space configurations for each element of poses
 configs = []
@@ -78,7 +73,22 @@ p.resetDebugVisualizerCamera( cameraDistance=3, cameraYaw=-50, cameraPitch=-35, 
 # run simulation through all configurations, and then stop 
 iter = 0
 while 1:
+  blue = [0,1,3]
+  for h in range(len(poses)-1):
+          nextPos = poses[h + 1]
+          p.addUserDebugLine(poses[h], nextPos, blue, 1, lifeTime=0)
+  
+
   while iter < len(configs): 
+    # change the velocity of the base, experimental for now 
+    baseVel = p.getBaseVelocity(bodyUniqueId = kukaId)
+    print("base1 = ", baseVel)
+
+    #p.applyExternalForce(objectUniqueId = kukaId, linkIndex= -1, forceObj=[0,2,0], posObj=[0,0.5,0], flags=p.WORLD_FRAME)
+    #p.resetBaseVelocity(objectUniqueId = kukaId, linearVelocity=[0,2,0])
+
+    baseVel2 = p.getBaseVelocity(bodyUniqueId = kukaId)
+    print("base2 = ", baseVel2)
     for i in range(len(configs)):
       config = configs[i]
       
@@ -92,18 +102,18 @@ while 1:
 
       # show the trajectory the robot is taking
       
-      black = [0,0,0]
+      red = [1,0,0]
       debugDuration = 15
       firstPos = poses[0]
       currPos = poses[i]
-      if i < len(poses) -10:
-        nextPos = poses[i + 10]
-        p.addUserDebugLine(currPos, nextPos, black, 1, lifeTime=0)
+      # print current end effector pos
+      ls = p.getLinkState(kukaId, kukaEndEffectorIndex)
+      p.addUserDebugLine(currPos, ls[4], red, 1, lifeTime=0)
 
+      pauseTime = 1/300
       # show current workspace position 
-      currPosStr = str(poses[i])
-      pauseTime = 1/100
-      p.addUserDebugText(currPosStr, [0,0,1], black, lifeTime = pauseTime)
+      # currPosStr = str(poses[i])
+      # p.addUserDebugText(currPosStr, [0,0,2], black, lifeTime = 0, replaceItemUniqueId=1)
 
       # step the simulation 
       p.stepSimulation()
