@@ -3,7 +3,7 @@ import time
 import math
 from datetime import datetime
 import pybullet_data
-from geoPaths import PATH
+from geoPaths import PATH, path_df
 
 
 # environment variables 
@@ -35,17 +35,32 @@ basePos = baseInfo[0]
 x = basePos[0]
 y = basePos[1]
 rBB = [(x+0.5, y-1.5, 0), (x+0.5, y-0.5, 0), (x-0.5, y-0.5, 0), (x-0.5, y-1.5, 0)]
-for pt in range(len(rBB) -1 ):
+for pt in range(len(rBB) -1):
     p.addUserDebugLine(rBB[pt], rBB[pt + 1], lineColorRGB=debugColor, lineWidth=1, lifeTime=0)
 
+# robot will only be working in one hemisphere
+posPathDF = path_df.loc[path_df['y'] >= 0]
+negPathDF = path_df.loc[path_df['y'] < 0]
 
-# print("base_world_pos: ", baseLoc[0])
+# show the hemisphere 
+for point in range(posPathDF.shape[0]-1):
+    currPoint = tuple(posPathDF.iloc[point])
+    nextPoint = tuple(posPathDF.iloc[point + 1])
+    p.addUserDebugLine(currPoint, nextPoint, lineColorRGB=[0,1,0], lineWidth=0.9, lifeTime=0)
 
-# print the desired geometry
+# find the distance between the robot and the closest point in its hemisphere
+
+
+# show the desired geometry
 print('printing the geom')
-for point in range(len(path)-1):
-    currPoint = path[point]
-    nextPoint = path[point + 1]
+# for point in range(len(path)-1):
+#     currPoint = path[point]
+#     nextPoint = path[point + 1]
+#     p.addUserDebugLine(currPoint, nextPoint, lineColorRGB=debugColor, lineWidth=0.9, lifeTime=0)
+ 
+for point in range(path_df.shape[0]-1):
+    currPoint = tuple(path_df.iloc[point])
+    nextPoint = tuple(path_df.iloc[point + 1])
     p.addUserDebugLine(currPoint, nextPoint, lineColorRGB=debugColor, lineWidth=0.9, lifeTime=0)
 
 # execute the simulation

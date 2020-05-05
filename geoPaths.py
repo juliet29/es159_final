@@ -13,6 +13,14 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
 import pandas as pd
 
+# function for plottong the the contours organized by consecutive paths 
+def plot_dif_contour(df, z_val):
+  z_bool = df['z'] == z_val
+  dz = df[z_bool].reset_index(drop=True)
+  for i in range(dz.shape[0]):
+    ax.plot(dz['x'][i],dz['y'][i], dz['z'][i] +1 )
+    # figure out a way to always have z be in between 0 and 1
+
 # set up the figure 
 #fig_0 = plt.figure()
 #ax = fig_0.gca(projection='3d')
@@ -21,8 +29,8 @@ import pandas as pd
 # kuka iiwa workspace
 # X = np.arange(-0.5, 0.1, 0.01)
 # Y = np.arange(-0.5, 0.5, 0.01)
-X = np.arange(-5, 5, 0.5)
-Y = np.arange(-5, 5, 0.5)
+X = np.arange(-1.5, 1.5, 0.5)
+Y = np.arange(-1.5, 1.5, 0.5)
 X, Y = np.meshgrid(X, Y)
 R = np.sqrt(X**2 + Y**2)
 Z = -np.sqrt(R)
@@ -66,13 +74,6 @@ for row_n in range(np.shape(df)[0]):
 # make sure the nice_df looks nice 
 #print(nice_df.head(7))
 
-# function for plottong the the contours organized by consecutive paths 
-def plot_dif_contour(df, z_val):
-  z_bool = df['z'] == z_val
-  dz = df[z_bool].reset_index(drop=True)
-  for i in range(dz.shape[0]):
-    ax.plot(dz['x'][i],dz['y'][i], dz['z'][i] +1 )
-    # figure out a way to always have z be in between 0 and 1
 
 # plot contours according to consecutive paths 
 # fig_1 = plt.figure()
@@ -80,6 +81,11 @@ def plot_dif_contour(df, z_val):
 # for i in zs:
 #   plot_dif_contour(nice_df, i)
 # plt.show()
+
+# want to bring all the zs up to the z = 0 level at least 
+min_z = nice_df['z'][0]
+if min_z < 0:
+  nice_df['z'] = nice_df['z'] + abs(min_z)
 
 # turn the nice_df into a list of points for printing 
 print("appending paths")
@@ -91,8 +97,21 @@ for lev in range(nice_df.shape[0]):
   for element in range(len(curr_level)):
     point = (nice_df['x'][lev][element], nice_df['y'][lev][element], nice_df['z'][lev]+1)
     path.append(point)
-
 # save to a constant 
 PATH = path
+
+# turn into a nice_df into path_df for data handling
+path_df = pd.DataFrame(columns=["x", "y", "z"])
+path_rows = []
+# go through all z 
+for lev in range(nice_df.shape[0]):
+  # all the x,y at a certain z 
+  curr_level = nice_df['x'][lev]
+  for element in range(len(curr_level)):
+      nu_dict = {'x': nice_df['x'][lev][element], 'y': nice_df['y'][lev][element], 'z': nice_df['z'][lev]}
+      path_rows.append(nu_dict)
+path_df = pd.DataFrame(path_rows)
+# save to a const also
+PATH_DF = path_df
 
 
