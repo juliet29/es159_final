@@ -19,7 +19,7 @@ p.setGravity(0, 0, -10)
 p.setRealTimeSimulation(0)
 
 # reset cam
-p.resetDebugVisualizerCamera( cameraDistance=8, cameraYaw=-90, cameraPitch=-30, cameraTargetPosition=[0,0,0])
+p.resetDebugVisualizerCamera(cameraDistance=8, cameraYaw=-90, cameraPitch=-30, cameraTargetPosition=[0,0,0])
 
 # create workspace where geometry will be printed 
 geoSpaceShape = p.createCollisionShape(shapeType=p.GEOM_BOX, halfExtents=[2,2,0])
@@ -91,10 +91,27 @@ while (1):
         kuka.translate([0,0,0])
         # update the bounding box
         drawCont(p, kuka.rBB, [0.1,0.5,0])
+        print('not doing traj')
+        y_align = True
     elif x_align and y_align:
+        #print('doing trajs')
         # find points that are within the robots bounding box 
         currPoints = pointFilter(zeroDF, kuka.rBB)
-        print(currPoints)
+        # execute the configurations for these points
+        if not currPoints.empty:
+            kuka.execTraj(currPoints)
+            print("traj executed!")
+        else:
+            print("no points in this bounding box" )
+
+        # if currPoints: 
+        #     configs = []
+        #     for pos in poses:
+        #         jointPoses = p.calculateInverseKinematics(kukaId, kukaEndEffectorIndex, pos, orn, ll, ul, jr, rp)
+        #         configs.append(jointPoses)
+        #     for joint in range(numJoints):
+        #         p.setJointMotorControl2(bodyIndex = kukaId, jointIndex=joint, controlMode = p.POSITION_CONTROL, targetPosition=config[n])
+        
         
 
         # eval IK for points within rBB
@@ -103,9 +120,6 @@ while (1):
         # redraw oBB around them 
         # repeat 
     
-        
-
-
     p.stepSimulation()
 
 
