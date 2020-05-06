@@ -58,10 +58,10 @@ o_vertices = [0,0, 0,1, 1,1,1,0]
 drawCont(p, oBB, [1,1,1])
 
 # show centers of oBB, rBB 
-p.addUserDebugLine(basePos, oBBC, lineColorRGB=[0,1,1], lineWidth=0.9, lifeTime=0)
-p.addUserDebugLine(basePos, kuka.rBBC, lineColorRGB=[1,1,0], lineWidth=0.9, lifeTime=0)
+# p.addUserDebugLine(basePos, oBBC, lineColorRGB=[0,1,1], lineWidth=0.9, lifeTime=0)
+# p.addUserDebugLine(basePos, kuka.rBBC, lineColorRGB=[1,1,0], lineWidth=0.9, lifeTime=0)
 
-# tolerance 
+# tolerance for aligning the bounding boxes
 tol = 0.001
 
 #  execute the simulation
@@ -69,20 +69,40 @@ tol = 0.001
 #     p.stepSimulation()
 
 
-# move robot in x until the oBB and rBB are aligned
+# initial distances between oBBC and rBBC
 xDist = distance.euclidean(oBBC[0],kuka.rBBC[0]) 
+yDist = distance.euclidean(oBBC[1],kuka.rBBC[1])
 x_align = False
+y_align = False
 while (1):
-    if xDist > tol and x_align == False:
+    # align the x 
+    if xDist > tol and not x_align:
         kuka.translate([-0.3,0,0])
-        baseVel = p.getBaseVelocity(bodyUniqueId = kuka.id)
         xDist = distance.euclidean(oBBC[0],kuka.rBBC[0])
- 
-    else:
-        x_align = True
+    elif xDist <= tol and not x_align:
         kuka.translate([0,0,0])
+        x_align = True
         # draw the new bounding box 
         drawCont(p, kuka.rBB, [0.1,0.5,0])
+
+    # then align the y 
+    elif yDist > tol and x_align:
+        kuka.translate([0,-0.3,0])
+        yDist = distance.euclidean(oBBC[1],kuka.rBBC[1])
+    elif yDist < tol and x_align:
+        kuka.translate([0,0,0])
+        y_align = True
+        drawCont(p, kuka.rBB, [0.1,0.5,0])
+    elif x_align and y_align:
+        # eval IK for points within rBB
+        # execute those trajectories 
+        # identify the next closest points 
+        # redraw oBB around them 
+        # repeat 
+    
+        
+
+
     p.stepSimulation()
 
 
