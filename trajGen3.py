@@ -15,6 +15,8 @@ from helper import midpoint, boundBox, drawCont, drawContDF
 physicsClient =  p.connect(p.GUI)
 p.setAdditionalSearchPath(pybullet_data.getDataPath()) 
 planeId = p.loadURDF("plane.urdf")
+p.setGravity(0, 0, -10)
+p.setRealTimeSimulation(0)
 
 # reset cam
 p.resetDebugVisualizerCamera( cameraDistance=8, cameraYaw=-90, cameraPitch=-30, cameraTargetPosition=[0,0,0])
@@ -37,8 +39,7 @@ posPathDF = path_df.loc[path_df['y'] >= 0]
 negPathDF = path_df.loc[path_df['y'] < 0]
 
 # show the hemisphere where robot will be working 
-drawContDF(p,posPathDF, [0,0.5,0] )
-
+# drawContDF(p,posPathDF, [0,0.5,0] )
 
 # only want to consider points at z = 0 now
 zeroDF = posPathDF.loc[posPathDF['z'] == 0]
@@ -63,34 +64,27 @@ p.addUserDebugLine(basePos, kuka.rBBC, lineColorRGB=[1,1,0], lineWidth=0.9, life
 # tolerance 
 tol = 0.001
 
-# # execute the simulation
-# p.setGravity(0, 0, -10)
-# p.setRealTimeSimulation(0)
-while (1):
-    p.stepSimulation()
-    #time.sleep(5)
-# arr = False
-# # move robot in y until the oBB and rBB are aligned
-# y_dist = distance.euclidean(oBBC[0],rBBC[0]) 
+#  execute the simulation
 # while (1):
-#     if y_dist > tol and arr==False:
-#         p.resetBaseVelocity(objectUniqueId = kukaId, linearVelocity=[-0.3,0,0])
-#         # check where base is 
-#         # baseInfo = p.getLinkState(bodyUniqueId=kukaId, linkIndex=0)
-#         # basePos = baseInfo[0]
-#         # xR = basePos[0]
-#         # yR = basePos[1]
-#         # rBB = [(xR+0.5, yR-1.5, 0), (xR+0.5, yR-0.5, 0), (xR-0.5, yR-0.5, 0), (xR-0.5, yR-1.5, 0)]
-#         # rBBC = midpoint(rBB[0], rBB[2])
-#         # print(rBBC)
-#         y_dist = distance.euclidean(oBBC[0],rBBC[0])
-#     else:
-#         arr = True
-#         p.resetBaseVelocity(objectUniqueId = kukaId, linearVelocity=[0,0,0])
-#         print("here!")
+#     p.stepSimulation()
 
-    # need to write functions 
-    #      
+
+# move robot in x until the oBB and rBB are aligned
+xDist = distance.euclidean(oBBC[0],kuka.rBBC[0]) 
+x_align = False
+while (1):
+    if xDist > tol and x_align == False:
+        kuka.translate([-0.3,0,0])
+        baseVel = p.getBaseVelocity(bodyUniqueId = kuka.id)
+        xDist = distance.euclidean(oBBC[0],kuka.rBBC[0])
+ 
+    else:
+        x_align = True
+        kuka.translate([0,0,0])
+        # draw the new bounding box 
+        drawCont(p, kuka.rBB, [0.1,0.5,0])
+    p.stepSimulation()
+
 
 
         
