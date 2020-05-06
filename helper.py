@@ -1,5 +1,7 @@
-import numpy as np
 "Helper Functions"
+from scipy.spatial import distance
+import numpy as np
+
 
 def midpoint(p1, p2):
     "Return the midpoint of 2 points in 3D space at z = 0"
@@ -48,3 +50,14 @@ def pointFilter(df, bb):
     # points that are greater than the min y 
     d = c[c['y'] > boundEdge(bb, 1)[1] ]
     return d
+
+def findFurthestPoint(df, initPt):
+    "Takes in a dataframe of x,y,z points and a initial point defined as a list [x,y,z], and finds the furthest point in the dataframe from the initial point"
+    # initial furthest point is that which is defined by the first row of the df
+    furthestPt = df.iloc[0]
+    for i in range(df.shape[0]):
+        furthest_dist = distance.euclidean(initPt, furthestPt)
+        # only replace the furthestPt if there is a greater furthest_dist
+        if distance.euclidean(initPt, list(df.iloc[i])) > furthest_dist:
+            furthestPt = df.iloc[i]
+    return furthestPt
