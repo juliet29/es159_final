@@ -7,7 +7,7 @@ import pybullet_data
 from scipy.spatial import distance
 from geoPaths import path_df
 from robot import Robot
-from helper import midpoint, boundBox, drawCont, drawContDF
+from helper import midpoint, boundBox, drawCont, drawContDF, pointFilter
 
 
 # connect and set up the environment
@@ -39,7 +39,7 @@ posPathDF = path_df.loc[path_df['y'] >= 0]
 negPathDF = path_df.loc[path_df['y'] < 0]
 
 # show the hemisphere where robot will be working 
-# drawContDF(p,posPathDF, [0,0.5,0] )
+drawContDF(p,posPathDF, [0,0.5,0] )
 
 # only want to consider points at z = 0 now
 zeroDF = posPathDF.loc[posPathDF['z'] == 0]
@@ -69,7 +69,7 @@ tol = 0.001
 #     p.stepSimulation()
 
 
-# initial distances between oBBC and rBBC
+# initial distances between oBBC and rBBC (the center of the object bounding box, and the robot bounding box )
 xDist = distance.euclidean(oBBC[0],kuka.rBBC[0]) 
 yDist = distance.euclidean(oBBC[1],kuka.rBBC[1])
 x_align = False
@@ -82,18 +82,21 @@ while (1):
     elif xDist <= tol and not x_align:
         kuka.translate([0,0,0])
         x_align = True
-        # draw the new bounding box 
-        drawCont(p, kuka.rBB, [0.1,0.5,0])
 
     # then align the y 
-    elif yDist > tol and x_align:
+    elif yDist > tol and x_align and not y_align:
         kuka.translate([0,-0.3,0])
         yDist = distance.euclidean(oBBC[1],kuka.rBBC[1])
-    elif yDist < tol and x_align:
+    elif yDist < tol and x_align and not y_align:
         kuka.translate([0,0,0])
-        y_align = True
+        # update the bounding box
         drawCont(p, kuka.rBB, [0.1,0.5,0])
     elif x_align and y_align:
+        # find points that are within the robots bounding box 
+        currPoints = pointFilter(zeroDF, kuka.rBB)
+        print(currPoints)
+        
+
         # eval IK for points within rBB
         # execute those trajectories 
         # identify the next closest points 

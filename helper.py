@@ -29,3 +29,22 @@ def drawContDF(p, df, color):
         currPoint = tuple(df.iloc[point])
         nextPoint = tuple(df.iloc[point + 1])
         p.addUserDebugLine(currPoint, nextPoint, lineColorRGB=color, lineWidth=1, lifeTime=0)
+
+def boundEdge(bb, var):
+    "Determines the max and min boundaries of a bounding box in a var direction"
+    ns = [bb[i][var] for i in range(len(bb))]
+    n_max = max(ns)
+    n_min = min(ns)
+    return(n_max, n_min)
+
+def pointFilter(df, bb):
+    "Filters an x,y,z dataframe of point based on the coordinates of a bounding box "
+    # points that are less than the max x
+    a = df[df['x'] < boundEdge(bb, 0)[0]]
+    # points that are greater than the min x
+    b = a[a['x'] > boundEdge(bb, 0)[1]]
+    # points that are less than the max y 
+    c = b[b['y'] < boundEdge(bb, 1)[0] ]
+    # points that are greater than the min y 
+    d = c[c['y'] > boundEdge(bb, 1)[1] ]
+    return d
