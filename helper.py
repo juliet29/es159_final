@@ -61,3 +61,14 @@ def findFurthestPoint(df, initPt):
         if distance.euclidean(initPt, list(df.iloc[i])) > furthest_dist:
             furthestPt = df.iloc[i]
     return furthestPt
+
+def findClosestPoint(df, initPt):
+    "Takes in a dataframe of x,y,z points and a initial point defined as a list [x,y,z], and finds the furthest point in the dataframe from the initial point"
+    # initial furthest point is that which is defined by the first row of the df
+    closestPt = df.iloc[0]
+    for i in range(df.shape[0]):
+        closestDist = distance.euclidean(initPt, closestPt)
+        # only replace the furthestPt if there is a greater furthest_dist
+        if distance.euclidean(initPt, list(df.iloc[i])) < closestDist:
+            closestPt = df.iloc[i]
+    return closestPt

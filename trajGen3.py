@@ -11,8 +11,8 @@ from robot import Robot
 
 
 # connect and set up the environment
-physicsClient =  p.connect(p.DIRECT) # debug mode
-#physicsClient =  p.connect(p.GUI)
+#physicsClient =  p.connect(p.DIRECT) # debug mode
+physicsClient =  p.connect(p.GUI)
 p.setAdditionalSearchPath(pybullet_data.getDataPath()) 
 planeId = p.loadURDF("plane.urdf")
 p.setGravity(0, 0, -10)
@@ -53,12 +53,8 @@ o_vertices = [0,0, 0,1, 1,1,1,0]
 (oBB, oBBC) = h.boundBox(furthestPt, o_vertices)
 h.drawCont(p, oBB, [1,1,1])
 
-
 # tolerance for aligning the bounding boxes
 tol = 0.001
-
-
-
 
 # initial distances between oBBC and rBBC (the center of the object bounding box, and the robot bounding box )
 xDist = distance.euclidean(oBBC[0],kuka.rBBC[0]) 
@@ -95,8 +91,9 @@ while (1):
         else:
             print("no points in this bounding box" )
     elif x_align and y_align and t_exec:
-        print(" done executiong")
+        print("align")
         # identify the next closest points
+
 
 
   
