@@ -1,10 +1,12 @@
 # es159_final
-trajGen2.py - PyBullet simulation of Kuka Iiwa robot printing a geometry in it's own workspace
-trajGen3.py - PyBullet simulation of Kuka Iiwa roprinting a geometry that is larger than its workspace 
-extractPaths_orig.ipynb - Python notebook that shows visualization of the paths being extracted from the geometry, and motion planning of the robot 
-robot.py - robot class that controls the robot's motion 
-helper.py - helper functions
-geoPaths.py - file that create paths for the robot to print from a given geometry 
+
+## Important Files 
+* trajGen2.py - PyBullet simulation of Kuka Iiwa robot printing a geometry in it's own workspace. 
+* trajGen3.py - PyBullet simulation of Kuka Iiwa roprinting a geometry that is larger than its workspace 
+* extractPaths_orig.ipynb - Python notebook that shows visualization of the paths being extracted from the geometry, and motion planning of the robot 
+* robot.py - robot class that controls the robot's motion 
+* helper.py - helper functions
+* geoPaths.py - file that create paths for the robot to print from a given geometry 
 
 
 
