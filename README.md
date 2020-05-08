@@ -1,4 +1,4 @@
-# es159_final
+# ES159: Introduction to Robotics Final Project: Robotic 3D Printing for Construction 
 
 ## Important Files 
 * trajGen2.py - PyBullet simulation of Kuka Iiwa robot printing a geometry in it's own workspace. 
